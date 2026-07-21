@@ -1,0 +1,4 @@
+{
+  "name": "smart-parking-space-detector",
+  "install": "bash .cursor/install.sh"
+}

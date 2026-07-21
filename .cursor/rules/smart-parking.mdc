@@ -1,0 +1,6 @@
+---
+description: End-to-end implementation and GitHub workflow rules for the smart parking project
+alwaysApply: true
+---
+
+Read `AGENTS.md` and `SETUP.md` before editing. Follow the phase and PR plan exactly. Never push feature work directly to `main`. Use synthetic media by default. Never commit secrets, model weights, footage, databases, or generated videos. Use `uv`, run all quality gates, and merge only after checks and review pass.
