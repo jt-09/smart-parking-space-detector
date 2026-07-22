@@ -1,9 +1,34 @@
 # Smart Parking-Space Detector
 
-This repository is bootstrapped for an autonomous Cursor Agent implementation.
+Fixed-camera parking-lot occupancy detection for portfolio and educational use.
 
-1. Read [`HUMAN_BOOTSTRAP.md`](HUMAN_BOOTSTRAP.md) as the repository owner.
-2. The implementation agent must read [`AGENTS.md`](AGENTS.md) and [`SETUP.md`](SETUP.md) in full.
-3. Start the project with the Cursor command `/start-smart-parking` or paste the launch prompt from `HUMAN_BOOTSTRAP.md`.
+> **License note:** This repository is **AGPL-3.0**. The default detector stack
+> (Ultralytics YOLO) is also AGPL-3.0 for open-source use. Commercial or
+> closed-source redistribution requires independent licensing review of both
+> this project and its dependencies. This is not legal advice.
 
-No model weights, footage, credentials, generated video, or databases belong in Git.
+## Status
+
+Phase 0 scaffold in progress. See [`SETUP.md`](SETUP.md) for the full delivery plan
+and [`AGENTS.md`](AGENTS.md) for autonomous agent rules.
+
+**Developmental commit window:** 2026-07-22 through 2026-07-28 (`+10:00`).
+
+## Quick start (after Phase 0)
+
+```bash
+uv sync --locked --all-groups
+uv run smart-parking --help
+```
+
+Synthetic media is used for tests and the default demo. Never commit footage,
+model weights, credentials, databases, or generated videos.
+
+## Documentation
+
+- [`SETUP.md`](SETUP.md) — end-to-end implementation runbook
+- [`AGENTS.md`](AGENTS.md) — agent execution rules and commit timeline
+- [`HUMAN_BOOTSTRAP.md`](HUMAN_BOOTSTRAP.md) — owner one-time setup
+- [`docs/development-timeline.md`](docs/development-timeline.md) — commit proposals
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution workflow
+- [`SECURITY.md`](SECURITY.md) — vulnerability reporting
