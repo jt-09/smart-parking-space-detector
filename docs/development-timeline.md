@@ -52,3 +52,31 @@ This document records developmental commit proposals and outcomes produced with 
    - Rationale: licensing and contributor docs land with the scaffold
 
 Architecture impact: repository becomes a typed, tested Python package with CI.
+
+### PR 2 — Domain and config (`feat/domain-and-config`)
+
+`LAST_COMMIT_AT`: 2026-07-22T14:33:41+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned day: 2026-07-23
+
+1. **2026-07-23T09:18:42+10:00** — `feat(domain): define parking detection and event models`
+   - Files: `src/smart_parking/domain/**`
+   - Rationale: establish typed domain contracts before config/IO adapters
+   - Bounds: after LAST_COMMIT_AT; inside owner window; ≤ NOW
+2. **2026-07-23T10:47:15+10:00** — `feat(config): add validated layered application settings`
+   - Files: `src/smart_parking/config/**`, `configs/**`, `pyproject.toml`, `uv.lock`
+   - Rationale: settings and parking-map loading depend on domain types
+   - Bounds: after previous commit; on 2026-07-23
+3. **2026-07-23T12:22:08+10:00** — `test(config): cover precedence and invalid parking maps`
+   - Files: `tests/unit/test_domain.py`, `tests/unit/test_config.py`
+   - Rationale: lock acceptance criteria before docs polish
+   - Bounds: after previous commit; on 2026-07-23
+4. **2026-07-23T13:51:33+10:00** — `docs(config): document configuration and secret handling`
+   - Files: `docs/configuration.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: operator-facing precedence and secret rules with timeline outcome
+   - Bounds: after previous commit; on 2026-07-23; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/domain-and-config`
+- Issue: #3
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
