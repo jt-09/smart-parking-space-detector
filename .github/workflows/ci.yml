@@ -23,6 +23,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
       - name: Ruff format
@@ -40,6 +41,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
       - name: Unit tests with coverage
@@ -64,6 +66,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
       - name: Integration placeholder
@@ -78,6 +81,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
       - name: Build distributions

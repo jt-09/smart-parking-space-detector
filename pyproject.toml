@@ -8,7 +8,7 @@ requires-python = ">=3.11,<3.13"
 authors = [{ name = "jt-09" }]
 keywords = ["parking", "computer-vision", "yolo", "occupancy", "fastapi"]
 dependencies = [
-  "numpy>=1.26,<3",
+  "numpy>=1.26,<2.5",
   "opencv-python>=4.9,<5",
   "pydantic>=2.7,<3",
   "pydantic-settings>=2.3,<3",

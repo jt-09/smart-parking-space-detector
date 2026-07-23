@@ -97,6 +97,10 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
    - Files: `tests/unit/test_sources.py`, `docs/development-timeline.md`, `CHANGELOG.md`
    - Rationale: lock acceptance criteria (EOF, release, redaction, bounded reconnect) before PR
    - Bounds: after previous commit; on 2026-07-23; ≤ NOW
+4. **2026-07-23T18:41:07+10:00** — `fix(ci): pin Python 3.11 and numpy for mypy`
+   - Files: `.github/workflows/ci.yml`, `pyproject.toml`, `uv.lock`, `docs/development-timeline.md`
+   - Rationale: CI defaulted to 3.12 + numpy 2.5 stubs incompatible with mypy `python_version = 3.11`
+   - Bounds: after previous commit; on 2026-07-23; ≤ NOW
 
 #### Outcome
 
@@ -105,3 +109,4 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Synthetic media used for tests (temporary OpenCV-generated fixtures only)
+- Follow-up fix commit added after CI quality failure on numpy 2.5 / Python 3.12
