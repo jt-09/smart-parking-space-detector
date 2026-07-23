@@ -80,3 +80,28 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Issue: #3
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
+
+### PR 3 — Frame sources (`feat/frame-sources`)
+
+`LAST_COMMIT_AT`: 2026-07-23T13:51:33+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned afternoon: 2026-07-23
+
+1. **2026-07-23T15:08:27+10:00** — `feat(source): define frame source protocol and metadata`
+   - Files: `src/smart_parking/sources/base.py`, `synthetic.py`, `__init__.py`, `pyproject.toml` (numpy), `uv.lock`
+   - Rationale: establish OpenCV-agnostic FrameSource contract and synthetic source before capture adapters
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-23 afternoon; ≤ NOW; inside owner window
+2. **2026-07-23T16:34:51+10:00** — `feat(source): implement OpenCV video and camera capture`
+   - Files: `opencv_source.py`, `factory.py`, `__init__.py`, `pyproject.toml` (opencv-python), `uv.lock`
+   - Rationale: adapter owns VideoCapture lifecycle, reconnect, and credential-safe logging
+   - Bounds: after previous commit; on 2026-07-23; ≤ NOW
+3. **2026-07-23T17:56:19+10:00** — `test(source): cover EOF errors and resource cleanup`
+   - Files: `tests/unit/test_sources.py`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: lock acceptance criteria (EOF, release, redaction, bounded reconnect) before PR
+   - Bounds: after previous commit; on 2026-07-23; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/frame-sources`
+- Issue: #5
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Synthetic media used for tests (temporary OpenCV-generated fixtures only)

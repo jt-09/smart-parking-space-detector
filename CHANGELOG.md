@@ -16,3 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Layered Pydantic application settings with YAML / environment / override
   precedence, example config, and validated parking-map loading.
 - Configuration guide documenting precedence and secret handling.
+- FrameSource protocol with UTC frame metadata, reconnect policy, and
+  credential redaction helpers.
+- OpenCV capture adapter for image, video, webcam, and stream sources with
+  bounded reconnect and resource cleanup; SyntheticFrameSource for deterministic tests.
