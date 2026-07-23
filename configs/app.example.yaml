@@ -1,0 +1,54 @@
+app:
+  environment: development
+  log_level: INFO
+  output_dir: output
+
+camera:
+  id: lot-a-camera-01
+  source: data/sample.mp4
+  reconnect_seconds: 5
+  max_frame_age_seconds: 3
+
+video:
+  process_every_n_frames: 1
+  output_fps: null
+  resize_width: null
+  display: false
+  save_annotated_video: true
+
+model:
+  name: yolo26n.pt
+  device: cpu
+  confidence: 0.30
+  iou: 0.50
+  allowed_classes: [car, motorcycle, bus, truck]
+  tracking_enabled: true
+  tracker: null
+
+geometry:
+  parking_map: configs/parking_spaces.example.json
+  footprint_height_ratio: 0.60
+  candidate_score_threshold: 0.18
+  occupied_enter_threshold: 0.30
+  occupied_exit_threshold: 0.12
+  weight_space_overlap: 0.55
+  weight_vehicle_overlap: 0.20
+  weight_center_inside: 0.10
+  weight_bottom_center_inside: 0.15
+
+state:
+  mode: frames
+  enter_confirm_frames: 5
+  exit_confirm_frames: 8
+  enter_confirm_seconds: 0.5
+  exit_confirm_seconds: 1.0
+  unknown_after_invalid_frames: 10
+
+persistence:
+  database_url: sqlite:///output/parking.db
+  snapshot_interval_seconds: 5
+  event_retention_days: 90
+
+api:
+  host: 127.0.0.1
+  port: 8000
