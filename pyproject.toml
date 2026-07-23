@@ -9,6 +9,7 @@ authors = [{ name = "jt-09" }]
 keywords = ["parking", "computer-vision", "yolo", "occupancy", "fastapi"]
 dependencies = [
   "numpy>=1.26,<3",
+  "opencv-python>=4.9,<5",
   "pydantic>=2.7,<3",
   "pydantic-settings>=2.3,<3",
   "pyyaml>=6.0,<7",
@@ -55,6 +56,10 @@ warn_return_any = true
 warn_unused_configs = true
 mypy_path = "src"
 packages = ["smart_parking"]
+
+[[tool.mypy.overrides]]
+module = ["cv2", "cv2.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
