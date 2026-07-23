@@ -10,6 +10,7 @@ keywords = ["parking", "computer-vision", "yolo", "occupancy", "fastapi"]
 dependencies = [
   "pydantic>=2.7,<3",
   "pydantic-settings>=2.3,<3",
+  "pyyaml>=6.0,<7",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +26,7 @@ dev = [
   "ruff>=0.5,<1",
   "mypy>=1.10,<2",
   "pre-commit>=3.7,<5",
+  "types-PyYAML>=6.0,<7",
 ]
 
 [build-system]

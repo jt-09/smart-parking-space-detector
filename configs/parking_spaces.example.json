@@ -1,0 +1,43 @@
+{
+  "camera_id": "lot-a-camera-01",
+  "reference_width": 1280,
+  "reference_height": 720,
+  "spaces": [
+    {
+      "id": "A1",
+      "label": "Space A1",
+      "zone": "A",
+      "enabled": true,
+      "polygon": [
+        [100, 200],
+        [220, 200],
+        [220, 360],
+        [100, 360]
+      ]
+    },
+    {
+      "id": "A2",
+      "label": "Space A2",
+      "zone": "A",
+      "enabled": true,
+      "polygon": [
+        [240, 200],
+        [360, 200],
+        [360, 360],
+        [240, 360]
+      ]
+    },
+    {
+      "id": "B1",
+      "label": "Space B1",
+      "zone": "B",
+      "enabled": true,
+      "polygon": [
+        [100, 400],
+        [220, 400],
+        [220, 560],
+        [100, 560]
+      ]
+    }
+  ]
+}
