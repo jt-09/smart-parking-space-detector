@@ -12,6 +12,10 @@ from pydantic import ValidationError
 
 from smart_parking.config.models import Settings
 from smart_parking.domain.parking import ParkingMap, ParkingSpace, Point
+from smart_parking.spaces.validation import (
+    PolygonValidationError,
+    validate_space_geometry,
+)
 
 ENV_PREFIX = "SMART_PARKING_"
 
@@ -146,34 +150,6 @@ def _parse_point(raw: Any, *, space_id: str, index: int) -> Point:
         raise ConfigError(msg) from exc
 
 
-def _validate_space_geometry(
-    space: ParkingSpace,
-    *,
-    reference_width: int,
-    reference_height: int,
-) -> None:
-    if space.area <= 0.0:
-        msg = (
-            f"Parking space '{space.id}' polygon has non-positive area "
-            f"({space.area}). Points may be collinear or duplicated; redraw the polygon."
-        )
-        raise ConfigError(msg)
-
-    for index, point in enumerate(space.polygon):
-        if not (0.0 <= point.x <= float(reference_width)):
-            msg = (
-                f"Parking space '{space.id}' point {index} x={point.x} is outside "
-                f"reference width [0, {reference_width}]."
-            )
-            raise ConfigError(msg)
-        if not (0.0 <= point.y <= float(reference_height)):
-            msg = (
-                f"Parking space '{space.id}' point {index} y={point.y} is outside "
-                f"reference height [0, {reference_height}]."
-            )
-            raise ConfigError(msg)
-
-
 def load_parking_map(path: Path | str) -> ParkingMap:
     """Load and validate a parking-space map JSON file."""
     map_path = Path(path)
@@ -264,11 +240,14 @@ def load_parking_map(path: Path | str) -> ParkingMap:
         except ValueError as exc:
             raise ConfigError(str(exc)) from exc
 
-        _validate_space_geometry(
-            space,
-            reference_width=reference_width,
-            reference_height=reference_height,
-        )
+        try:
+            validate_space_geometry(
+                space,
+                reference_width=reference_width,
+                reference_height=reference_height,
+            )
+        except PolygonValidationError as exc:
+            raise ConfigError(str(exc)) from exc
         spaces.append(space)
 
     try:
