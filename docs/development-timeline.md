@@ -110,3 +110,32 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Synthetic media used for tests (temporary OpenCV-generated fixtures only)
 - Follow-up fix commit added after CI quality failure on numpy 2.5 / Python 3.12
+
+### PR 4 — Parking polygon editor (`feat/parking-map-editor`)
+
+`LAST_COMMIT_AT` (author): 2026-07-23T18:41:07+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned morning: 2026-07-24
+
+1. **2026-07-24T09:14:38+10:00** — `feat(spaces): add parking map serialization and scaling`
+   - Files: `src/smart_parking/spaces/**`, `src/smart_parking/config/loader.py`
+   - Rationale: serialize/scale/validate maps before interactive editing depends on them
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-24; ≤ NOW; inside owner window
+2. **2026-07-24T10:42:07+10:00** — `feat(editor): implement interactive polygon editing`
+   - Files: `src/smart_parking/tools/**`, `src/smart_parking/cli/main.py`, `pyproject.toml`, `uv.lock`
+   - Rationale: OpenCV UI + Typer `edit-spaces` on top of serialization helpers
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+3. **2026-07-24T12:18:55+10:00** — `test(spaces): cover polygon validation and round trips`
+   - Files: `tests/unit/test_spaces_editor.py`, `tests/test_package.py`
+   - Rationale: lock validation, scaling, and round-trip acceptance before docs
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+4. **2026-07-24T13:47:22+10:00** — `docs(editor): add parking map creation guide`
+   - Files: `docs/editor.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: operator controls + timeline outcome with the editor PR
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/parking-map-editor`
+- Issue: #7
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Shapely not added; self-intersection uses pure-Python segment checks

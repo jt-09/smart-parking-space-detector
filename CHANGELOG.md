@@ -20,3 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   credential redaction helpers.
 - OpenCV capture adapter for image, video, webcam, and stream sources with
   bounded reconnect and resource cleanup; SyntheticFrameSource for deterministic tests.
+- Parking-map JSON serialization, coordinate scaling helpers, and self-intersection
+  validation (no Shapely dependency).
+- OpenCV parking-space polygon editor with headless `ParkingMapEditor` core and
+  Typer `edit-spaces` CLI command; see `docs/editor.md`.
