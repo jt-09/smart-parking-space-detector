@@ -30,5 +30,8 @@ model weights, credentials, databases, or generated videos.
 - [`AGENTS.md`](AGENTS.md) — agent execution rules and commit timeline
 - [`HUMAN_BOOTSTRAP.md`](HUMAN_BOOTSTRAP.md) — owner one-time setup
 - [`docs/development-timeline.md`](docs/development-timeline.md) — commit proposals
+- [`docs/configuration.md`](docs/configuration.md) — settings precedence
+- [`docs/detection.md`](docs/detection.md) — YOLO models, devices, licensing
+- [`docs/editor.md`](docs/editor.md) — parking map polygon editor
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution workflow
 - [`SECURITY.md`](SECURITY.md) — vulnerability reporting
