@@ -12,7 +12,6 @@ import numpy as np
 
 from smart_parking.detection.base import ImageArray
 from smart_parking.detection.models import BoundingBox, Detection, DetectionBatch
-from smart_parking.domain.parking import Detection as DomainDetection
 
 logger = logging.getLogger(__name__)
 
@@ -166,9 +165,9 @@ class UltralyticsDetector:
         results: Sequence[Any],
         *,
         frame_index: int | None,
-    ) -> tuple[DomainDetection, ...]:
+    ) -> tuple[Detection, ...]:
         allowed = set(self._allowed_classes)
-        parsed: list[DomainDetection] = []
+        parsed: list[Detection] = []
         for result in results:
             boxes = getattr(result, "boxes", None)
             if boxes is None:

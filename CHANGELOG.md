@@ -24,3 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   validation (no Shapely dependency).
 - OpenCV parking-space polygon editor with headless `ParkingMapEditor` core and
   Typer `edit-spaces` CLI command; see `docs/editor.md`.
+- Detector protocol and `DetectionBatch` normalized outputs; Ultralytics YOLO
+  adapter with configurable model/device/confidence/IoU/class filter and optional
+  persistent track IDs; `FakeDetector` for weight-free tests; see `docs/detection.md`.

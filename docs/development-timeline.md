@@ -144,3 +144,36 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Shapely not added; self-intersection uses pure-Python segment checks
 - Follow-up fix commit added after CI failure on Typer/Rich help rendering
+
+### PR 5 — YOLO detector adapter (`feat/yolo-detector`)
+
+`LAST_COMMIT_AT` (author): 2026-07-24T15:08:44+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned afternoon: 2026-07-24
+
+1. **2026-07-24T15:11:44+10:00** — `feat(detection): define detector protocol and normalized outputs`
+   - Files: `src/smart_parking/detection/base.py`, `models.py`, `__init__.py`
+   - Rationale: protocol-first so domain/pipeline never import Ultralytics types
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-24 afternoon; ≤ NOW; inside owner window
+2. **2026-07-24T16:38:09+10:00** — `feat(detection): implement Ultralytics YOLO adapter`
+   - Files: `ultralytics_detector.py`, `pyproject.toml`, `uv.lock`, `__init__.py`
+   - Rationale: configurable CPU-default adapter with class filtering; lockfile refresh
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+3. **2026-07-24T17:52:31+10:00** — `feat(tracking): expose persistent track identifiers`
+   - Files: `ultralytics_detector.py`
+   - Rationale: optional `track` path maps box ids to `Detection.track_id` behind the same protocol
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+4. **2026-07-24T19:14:06+10:00** — `test(detection): add adapter contracts and fake detector`
+   - Files: `fake.py`, `tests/unit/test_detection.py`, `__init__.py`
+   - Rationale: weight-free contract tests always run; Ultralytics smoke gated by env/weights
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+5. **2026-07-24T20:27:48+10:00** — `docs(detection): document models devices and licensing`
+   - Files: `docs/detection.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: operator docs for models, AGPL, download behaviour, troubleshooting
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/yolo-detector`
+- Issue: #9
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.pt` weights, footage, `.env`, databases, or generated videos
+- CI remains runnable without model download (`FakeDetector` + skipped smoke)
