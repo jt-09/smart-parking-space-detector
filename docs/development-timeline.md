@@ -131,6 +131,10 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
    - Files: `docs/editor.md`, `docs/development-timeline.md`, `CHANGELOG.md`
    - Rationale: operator controls + timeline outcome with the editor PR
    - Bounds: after previous commit; on 2026-07-24; ≤ NOW
+5. **2026-07-24T14:31:09+10:00** — `fix(test): make Typer help assertions CI-safe`
+   - Files: `tests/test_package.py`
+   - Rationale: Rich ANSI/narrow terminal made `--source` assertions fail on Linux CI
+   - Bounds: after previous commit; on 2026-07-24; ≤ NOW
 
 #### Outcome
 
@@ -139,3 +143,4 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Shapely not added; self-intersection uses pure-Python segment checks
+- Follow-up fix commit added after CI failure on Typer/Rich help rendering
