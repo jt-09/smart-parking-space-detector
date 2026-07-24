@@ -13,6 +13,7 @@ dependencies = [
   "pydantic>=2.7,<3",
   "pydantic-settings>=2.3,<3",
   "pyyaml>=6.0,<7",
+  "shapely>=2.0,<3",
   "typer>=0.12,<1",
   "ultralytics>=8.3,<9",
 ]
@@ -60,7 +61,7 @@ mypy_path = "src"
 packages = ["smart_parking"]
 
 [[tool.mypy.overrides]]
-module = ["cv2", "cv2.*", "ultralytics", "ultralytics.*"]
+module = ["cv2", "cv2.*", "ultralytics", "ultralytics.*", "shapely", "shapely.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
