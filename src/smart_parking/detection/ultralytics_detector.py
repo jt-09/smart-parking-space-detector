@@ -35,7 +35,7 @@ class UltralyticsDetector:
         confidence: float = 0.30,
         iou: float = 0.50,
         allowed_classes: Sequence[str] | None = None,
-        tracking_enabled: bool = False,
+        tracking_enabled: bool = True,
         tracker: str | None = None,
     ) -> None:
         if not model_name.strip():
@@ -129,15 +129,21 @@ class UltralyticsDetector:
 
         model = self._ensure_model()
         started = time.perf_counter()
-        # Tracking is enabled in a follow-up commit; predict path is the default.
-        results = model.predict(
-            source=image,
-            conf=self._confidence,
-            iou=self._iou,
-            device=self._device,
-            classes=self._class_ids_filter(),
-            verbose=False,
-        )
+        predict_kwargs: dict[str, Any] = {
+            "source": image,
+            "conf": self._confidence,
+            "iou": self._iou,
+            "device": self._device,
+            "classes": self._class_ids_filter(),
+            "verbose": False,
+        }
+        if self._tracking_enabled:
+            if self._tracker:
+                predict_kwargs["tracker"] = self._tracker
+            predict_kwargs["persist"] = True
+            results = model.track(**predict_kwargs)
+        else:
+            results = model.predict(**predict_kwargs)
         elapsed_ms = (time.perf_counter() - started) * 1000.0
         detections = self._parse_results(results, frame_index=frame_index)
         return DetectionBatch(
@@ -183,10 +189,12 @@ class UltralyticsDetector:
                 else:
                     x1, y1, x2, y2 = (float(v) for v in xyxy)
                 track_id: str | None = None
-                box_id = getattr(box, "id", None)
-                if box_id is not None:
-                    raw = box_id.item() if hasattr(box_id, "item") else box_id
-                    track_id = str(int(raw))
+                if self._tracking_enabled:
+                    box_id = getattr(box, "id", None)
+                    if box_id is not None:
+                        raw = box_id.item() if hasattr(box_id, "item") else box_id
+                        # Persistent identity across frames when Ultralytics assigns an id.
+                        track_id = str(int(raw))
                 parsed.append(
                     Detection(
                         bbox=BoundingBox(x1=x1, y1=y1, x2=x2, y2=y2),
