@@ -27,3 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Detector protocol and `DetectionBatch` normalized outputs; Ultralytics YOLO
   adapter with configurable model/device/confidence/IoU/class filter and optional
   persistent track IDs; `FakeDetector` for weight-free tests; see `docs/detection.md`.
+- Geometry engine with Shapely overlap metrics, weighted occupancy scoring,
+  footprint height ratio, coordinate scaling, and deterministic one-to-one
+  vehicle-to-space assignment; see `docs/geometry.md`.

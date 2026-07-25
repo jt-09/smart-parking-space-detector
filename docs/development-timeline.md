@@ -177,3 +177,32 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.pt` weights, footage, `.env`, databases, or generated videos
 - CI remains runnable without model download (`FakeDetector` + skipped smoke)
+
+### PR 6 — Geometry scoring and assignment (`feat/geometry-assignment`)
+
+`LAST_COMMIT_AT` (author): 2026-07-24T20:27:48+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned morning: 2026-07-25
+
+1. **2026-07-25T09:16:27+10:00** — `feat(geometry): calculate polygon intersection metrics`
+   - Files: `src/smart_parking/geometry/validation.py`, `overlap.py`, `__init__.py`, `pyproject.toml`, `uv.lock`
+   - Rationale: Shapely conversion and overlap ratios before scoring depends on them
+   - Bounds: after LAST_COMMIT_AT (author); on 2026-07-25; ≤ NOW; inside owner window
+2. **2026-07-25T10:44:53+10:00** — `feat(geometry): add weighted occupancy scoring`
+   - Files: `assignment.py` (scoring), `__init__.py`
+   - Rationale: configurable weighted score from GeometrySettings before greedy assignment
+   - Bounds: after previous commit; on 2026-07-25; ≤ NOW
+3. **2026-07-25T12:09:18+10:00** — `feat(assignment): assign vehicles to spaces deterministically`
+   - Files: `assignment.py`, `__init__.py`
+   - Rationale: candidate threshold, greedy one-to-one, tie-breaks, frame scaling
+   - Bounds: after previous commit; on 2026-07-25; ≤ NOW
+4. **2026-07-25T13:37:41+10:00** — `test(geometry): cover overlap scaling and assignment edge cases`
+   - Files: `tests/unit/test_geometry.py`, `docs/geometry.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: lock exact numeric overlap, one-to-one, tie determinism, invalid geometry
+   - Bounds: after previous commit; on 2026-07-25; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/geometry-assignment`
+- Issue: #11
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Shapely added as a runtime dependency (`shapely>=2.0,<3`)
