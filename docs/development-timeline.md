@@ -206,3 +206,32 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Shapely added as a runtime dependency (`shapely>=2.0,<3`)
+
+### PR 7 — Temporal occupancy state machine (`feat/occupancy-state-machine`)
+
+`LAST_COMMIT_AT` (author): 2026-07-25T13:37:41+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned afternoon/evening: 2026-07-25
+
+1. **2026-07-25T14:52:18+10:00** — `feat(state): implement parking occupancy transitions`
+   - Files: `src/smart_parking/occupancy/state_machine.py`, `__init__.py`
+   - Rationale: per-space states and pending transitions before engine wiring
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-25 afternoon; ≤ NOW; inside owner window
+2. **2026-07-25T16:19:44+10:00** — `feat(state): add hysteresis and temporal confirmation`
+   - Files: `src/smart_parking/occupancy/engine.py`, `state_machine.py`, `__init__.py`
+   - Rationale: enter/exit thresholds, frame/time confirmation, unknown streak, engine evidence wiring
+   - Bounds: after previous commit; on 2026-07-25; ≤ NOW
+3. **2026-07-25T17:48:06+10:00** — `test(state): cover cancellation unknown and recovery paths`
+   - Files: `tests/unit/test_occupancy_state.py`
+   - Rationale: lock noisy-frame, hysteresis, cancel, unknown, recovery, bounded history acceptance
+   - Bounds: after previous commit; on 2026-07-25; ≤ NOW
+4. **2026-07-25T19:23:51+10:00** — `docs(state): explain thresholds and tuning`
+   - Files: `docs/state.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: operator-facing threshold/tuning guide with timeline outcome
+   - Bounds: after previous commit; on 2026-07-25 evening; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/occupancy-state-machine`
+- Issue: #13
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Tests use synthetic scores and FakeClock only (no footage / detector weights)
