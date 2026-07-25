@@ -30,3 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Geometry engine with Shapely overlap metrics, weighted occupancy scoring,
   footprint height ratio, coordinate scaling, and deterministic one-to-one
   vehicle-to-space assignment; see `docs/geometry.md`.
+- Temporal occupancy state machine with enter/exit hysteresis, frame- and
+  time-based confirmation, unknown recovery, bounded evidence history, and an
+  occupancy engine that wires assignment scores to per-space machines; see
+  `docs/state.md`.
