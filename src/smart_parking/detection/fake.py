@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 
 import numpy as np
 
 from smart_parking.detection.base import ImageArray
 from smart_parking.detection.models import BoundingBox, Detection, DetectionBatch
+
+DetectionScript = Mapping[int, Sequence[Detection]] | Callable[[int | None], Sequence[Detection]]
 
 
 class FakeDetector:
@@ -16,6 +18,9 @@ class FakeDetector:
     Useful for contract tests and pipeline fixtures. Boxes may be absolute
     pixel coordinates or fractions of frame width/height when ``normalized``
     is True.
+
+    When ``script`` is provided, per-frame detections override the default
+    list (mapping keyed by frame index, or a callable receiving frame_index).
     """
 
     def __init__(
@@ -27,6 +32,7 @@ class FakeDetector:
         tracking_enabled: bool = True,
         normalized: bool = False,
         inference_ms: float = 0.0,
+        script: DetectionScript | None = None,
     ) -> None:
         self._detections = tuple(detections or ())
         self._model_name = model_name
@@ -34,6 +40,7 @@ class FakeDetector:
         self._tracking_enabled = tracking_enabled
         self._normalized = normalized
         self._inference_ms = inference_ms
+        self._script = script
 
     @property
     def model_name(self) -> str:
@@ -59,8 +66,9 @@ class FakeDetector:
             raise ValueError(f"image dtype must be uint8, got {image.dtype}.")
 
         height, width = int(image.shape[0]), int(image.shape[1])
+        source = self._resolve_detections(frame_index)
         out: list[Detection] = []
-        for det in self._detections:
+        for det in source:
             bbox = det.bbox
             if self._normalized:
                 bbox = BoundingBox(
@@ -88,6 +96,22 @@ class FakeDetector:
             frame_index=frame_index,
             inference_ms=self._inference_ms,
         )
+
+    def _resolve_detections(self, frame_index: int | None) -> Sequence[Detection]:
+        if self._script is None:
+            return self._detections
+        if callable(self._script):
+            return self._script(frame_index)
+        script_map = self._script
+        if frame_index is None:
+            return self._detections
+        if frame_index in script_map:
+            return script_map[frame_index]
+        # Prefer exact keys; otherwise use the highest key <= frame_index.
+        prior = [k for k in script_map if k <= frame_index]
+        if not prior:
+            return self._detections
+        return script_map[max(prior)]
 
 
 def default_fake_detections() -> tuple[Detection, ...]:
