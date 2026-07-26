@@ -1,4 +1,4 @@
-﻿"""SQLite event persistence, analytics, and confirmed-transition recording."""
+﻿"""SQLite event persistence, analytics, and export helpers."""
 
 from smart_parking.persistence.analytics import (
     HourlyOccupancyBucket,
@@ -20,6 +20,12 @@ from smart_parking.persistence.db import (
     session_scope,
 )
 from smart_parking.persistence.events import EventService, TransitionRecorder
+from smart_parking.persistence.export import (
+    EVENT_CSV_FIELDS,
+    event_to_row,
+    export_events_csv,
+    export_events_json,
+)
 from smart_parking.persistence.models import (
     Base,
     OccupancyEventRow,
@@ -36,6 +42,7 @@ from smart_parking.persistence.repository import (
 )
 
 __all__ = [
+    "EVENT_CSV_FIELDS",
     "Base",
     "EventRepository",
     "EventService",
@@ -53,7 +60,10 @@ __all__ = [
     "calculate_durations",
     "calculate_turnover",
     "create_db_engine",
+    "event_to_row",
     "event_type_for_transition",
+    "export_events_csv",
+    "export_events_json",
     "hourly_occupancy_summary",
     "init_schema",
     "load_and_analyze",
@@ -64,3 +74,4 @@ __all__ = [
     "retention_cutoff",
     "session_scope",
 ]
+
