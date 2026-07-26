@@ -34,7 +34,9 @@ def test_cli_entrypoint_runs() -> None:
 def test_cli_help() -> None:
     result = runner.invoke(app, ["--help"], env=_CLI_ENV)
     assert result.exit_code == 0
-    assert "edit-spaces" in _plain(result.stdout)
+    plain = _plain(result.stdout)
+    assert "edit-spaces" in plain
+    assert "process" in plain
 
 
 def test_cli_version_flag() -> None:
@@ -51,3 +53,12 @@ def test_edit_spaces_help() -> None:
     assert "--output" in plain or "-o" in plain
     assert "source" in plain.lower()
     assert "output" in plain.lower()
+
+
+def test_process_help() -> None:
+    result = runner.invoke(app, ["process", "--help"], env=_CLI_ENV)
+    assert result.exit_code == 0
+    plain = _plain(result.stdout)
+    assert "--config" in plain or "-c" in plain
+    assert "--source" in plain or "-s" in plain
+    assert "process" in plain.lower()

@@ -235,3 +235,36 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Tests use synthetic scores and FakeClock only (no footage / detector weights)
+
+### PR 8 — End-to-end processing pipeline (`feat/processing-pipeline`)
+
+`LAST_COMMIT_AT` (author): 2026-07-25T19:23:51+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned morning/afternoon: 2026-07-26
+
+1. **2026-07-26T09:22:41+10:00** — `feat(pipeline): orchestrate detection and occupancy processing`
+   - Files: `src/smart_parking/pipeline/processor.py`, `snapshot.py`, `__init__.py`, `detection/fake.py` (frame script)
+   - Rationale: wire source → detect → assign → occupancy with sampling/metrics before rendering
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-26 morning; ≤ NOW; inside owner window
+2. **2026-07-26T10:47:18+10:00** — `feat(rendering): draw spaces detections and summary metrics`
+   - Files: `src/smart_parking/rendering/**`
+   - Rationale: annotation overlays consume confirmed snapshots only (no business logic)
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+3. **2026-07-26T12:31:05+10:00** — `feat(output): write annotated video and JSONL snapshots`
+   - Files: `src/smart_parking/pipeline/writers.py`, `pipeline/__init__.py`
+   - Rationale: persist artifacts under configurable output_dir with safe mkdir + close
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+4. **2026-07-26T14:08:33+10:00** — `feat(cli): add process command and graceful shutdown`
+   - Files: `src/smart_parking/cli/main.py`
+   - Rationale: operator entrypoint with SIGINT stop and guaranteed source cleanup
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+5. **2026-07-26T15:52:19+10:00** — `test(pipeline): add synthetic end-to-end integration test`
+   - Files: `tests/integration/**`, `tests/unit/test_pipeline_writers.py`, `tests/test_package.py`, `docs/pipeline.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: lock transitions + artifacts acceptance; document pipeline and timeline outcome
+   - Bounds: after previous commit; on 2026-07-26 afternoon; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/processing-pipeline`
+- Issue: #15
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- SyntheticFrameSource + FakeDetector only in tests (temp artifacts under pytest tmp dirs)
