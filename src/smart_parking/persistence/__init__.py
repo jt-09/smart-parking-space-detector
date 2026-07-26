@@ -1,4 +1,4 @@
-﻿"""SQLite event persistence, analytics, and export helpers."""
+"""SQLite event persistence, analytics, and export helpers."""
 
 from smart_parking.persistence.analytics import (
     HourlyOccupancyBucket,
@@ -74,4 +74,3 @@ __all__ = [
     "retention_cutoff",
     "session_scope",
 ]
-
