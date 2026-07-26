@@ -34,3 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   time-based confirmation, unknown recovery, bounded evidence history, and an
   occupancy engine that wires assignment scores to per-space machines; see
   `docs/state.md`.
+- End-to-end processing pipeline: frame sampling, detection, geometry
+  assignment, occupancy engine, annotation renderer, annotated video + JSONL
+  snapshot writers, FPS metrics, graceful Ctrl+C/EOF shutdown, and
+  `smart-parking process` CLI; see `docs/pipeline.md`.
