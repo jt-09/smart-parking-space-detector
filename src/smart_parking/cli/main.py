@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import signal
 import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,8 @@ app = typer.Typer(
     no_args_is_help=False,
     add_completion=False,
 )
+db_app = typer.Typer(help="Database schema and retention commands.")
+app.add_typer(db_app, name="db")
 
 
 def _version_callback(value: bool) -> None:
@@ -42,6 +45,25 @@ def main(
     if ctx.invoked_subcommand is None and not version:
         typer.echo(f"smart-parking {__version__}")
         typer.echo("Use smart-parking --help to list commands.")
+
+
+def _parse_iso_datetime(value: str) -> datetime:
+    text = value.strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    parsed = datetime.fromisoformat(text)
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=UTC)
+    return parsed.astimezone(UTC)
+
+
+def _open_repository(database_url: str) -> Any:
+    from smart_parking.persistence.db import create_db_engine, init_schema, make_session_factory
+    from smart_parking.persistence.repository import SqlAlchemyEventRepository
+
+    engine = create_db_engine(database_url)
+    init_schema(engine)
+    return SqlAlchemyEventRepository(make_session_factory(engine))
 
 
 @app.command("edit-spaces")
@@ -150,6 +172,16 @@ def process_command(
         min=1,
         help="Process every Nth frame (overrides video.process_every_n_frames).",
     ),
+    persist: bool | None = typer.Option(
+        None,
+        "--persist/--no-persist",
+        help="Persist occupancy events to SQLite (overrides persistence.enabled).",
+    ),
+    database_url: str | None = typer.Option(
+        None,
+        "--database-url",
+        help="SQLAlchemy database URL (overrides persistence.database_url).",
+    ),
 ) -> None:
     """Run the end-to-end occupancy pipeline on a video or camera source."""
     from smart_parking.config.loader import ConfigError, load_parking_map, load_settings
@@ -184,6 +216,10 @@ def process_command(
         overrides.setdefault("video", {})["process_every_n_frames"] = every_n
     if detector is not None and detector.strip().lower() == "fake":
         overrides.setdefault("model", {})["name"] = "fake"
+    if persist is not None:
+        overrides.setdefault("persistence", {})["enabled"] = persist
+    if database_url is not None:
+        overrides.setdefault("persistence", {})["database_url"] = database_url
 
     try:
         settings = load_settings(config, overrides=overrides or None)
@@ -218,6 +254,10 @@ def process_command(
         video_writer = AnnotatedVideoWriter(paths["annotated_video"], fps=fps)
     jsonl_writer = JsonlSnapshotWriter(paths["snapshots_jsonl"])
 
+    event_repository = None
+    if settings.persistence.enabled:
+        event_repository = _open_repository(settings.persistence.database_url)
+
     processor = ParkingProcessor(
         settings,
         parking,
@@ -227,6 +267,7 @@ def process_command(
         render_fn=AnnotationRenderer(),
         annotated_sink=video_writer,
         snapshot_sink=jsonl_writer,
+        event_repository=event_repository,
     )
 
     def _handle_sigint(signum: int, frame: object) -> None:
@@ -244,7 +285,6 @@ def process_command(
             raise typer.Exit(code=1) from exc
     finally:
         signal.signal(signal.SIGINT, previous)
-        # Processor.run() already closes sinks + source; close again is idempotent.
         if video_writer is not None:
             video_writer.close()
         if jsonl_writer is not None:
@@ -269,6 +309,161 @@ def process_command(
     if video_writer is not None:
         typer.echo(f"Annotated video: {paths['annotated_video']}")
     typer.echo(f"Snapshots JSONL: {paths['snapshots_jsonl']}")
+    if settings.persistence.enabled:
+        typer.echo(f"Events database: {settings.persistence.database_url}")
+
+
+@app.command("export-events")
+def export_events_command(
+    output: Path = typer.Option(  # noqa: B008
+        ...,
+        "--output",
+        "-o",
+        help="Destination CSV or JSON path.",
+    ),
+    format: str = typer.Option(  # noqa: A002
+        "csv",
+        "--format",
+        "-f",
+        help="Export format: csv or json.",
+    ),
+    config: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--config",
+        "-c",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional YAML settings file for database_url.",
+    ),
+    database_url: str | None = typer.Option(
+        None,
+        "--database-url",
+        help="SQLAlchemy database URL override.",
+    ),
+    space_id: str | None = typer.Option(
+        None,
+        "--space-id",
+        help="Optional parking-space id filter.",
+    ),
+    run_id: str | None = typer.Option(
+        None,
+        "--run-id",
+        help="Optional processing-run id filter.",
+    ),
+) -> None:
+    """Export occupancy events from SQLite to CSV or JSON."""
+    from smart_parking.config.loader import ConfigError, load_settings
+    from smart_parking.persistence.export import export_events_csv, export_events_json
+
+    try:
+        settings = load_settings(
+            config,
+            overrides={"persistence": {"database_url": database_url}} if database_url else None,
+        )
+    except ConfigError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    url = database_url or settings.persistence.database_url
+    repo = _open_repository(url)
+    events = repo.list_events(space_id=space_id, run_id=run_id)
+    fmt = format.strip().lower()
+    try:
+        if fmt == "csv":
+            path = export_events_csv(events, output)
+        elif fmt == "json":
+            path = export_events_json(events, output)
+        else:
+            typer.secho("format must be 'csv' or 'json'.", fg=typer.colors.RED, err=True)
+            raise typer.Exit(code=1)
+    except OSError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.secho(f"Exported {len(events)} events to {path}", fg=typer.colors.GREEN)
+
+
+@db_app.command("migrate")
+def db_migrate(
+    config: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--config",
+        "-c",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional YAML settings file for database_url.",
+    ),
+    database_url: str | None = typer.Option(
+        None,
+        "--database-url",
+        help="SQLAlchemy database URL override.",
+    ),
+) -> None:
+    """Create SQLite tables if they do not already exist."""
+    from smart_parking.config.loader import ConfigError, load_settings
+    from smart_parking.persistence.db import migrate
+
+    try:
+        settings = load_settings(
+            config,
+            overrides={"persistence": {"database_url": database_url}} if database_url else None,
+        )
+    except ConfigError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    url = database_url or settings.persistence.database_url
+    migrate(url)
+    typer.secho(f"Schema ready at {url}", fg=typer.colors.GREEN)
+
+
+@db_app.command("purge")
+def db_purge(
+    before: str = typer.Option(
+        ...,
+        "--before",
+        help="Delete occupancy events confirmed before this ISO-8601 timestamp (UTC).",
+    ),
+    config: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--config",
+        "-c",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional YAML settings file for database_url.",
+    ),
+    database_url: str | None = typer.Option(
+        None,
+        "--database-url",
+        help="SQLAlchemy database URL override.",
+    ),
+) -> None:
+    """Delete occupancy events older than the given timestamp."""
+    from smart_parking.config.loader import ConfigError, load_settings
+
+    try:
+        cutoff = _parse_iso_datetime(before)
+        settings = load_settings(
+            config,
+            overrides={"persistence": {"database_url": database_url}} if database_url else None,
+        )
+    except (ConfigError, ValueError) as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    url = database_url or settings.persistence.database_url
+    repo = _open_repository(url)
+    deleted = repo.purge_before(cutoff)
+    typer.secho(
+        f"Purged {deleted} occupancy events confirmed before {cutoff.isoformat()}",
+        fg=typer.colors.GREEN,
+    )
 
 
 if __name__ == "__main__":  # pragma: no cover
