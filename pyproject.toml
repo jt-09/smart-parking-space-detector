@@ -8,6 +8,8 @@ requires-python = ">=3.11,<3.13"
 authors = [{ name = "jt-09" }]
 keywords = ["parking", "computer-vision", "yolo", "occupancy", "fastapi"]
 dependencies = [
+  "fastapi>=0.111,<1",
+  "jinja2>=3.1,<4",
   "numpy>=1.26,<2.5",
   "opencv-python>=4.9,<5",
   "pydantic>=2.7,<3",
@@ -17,6 +19,7 @@ dependencies = [
   "sqlalchemy>=2.0,<3",
   "typer>=0.12,<1",
   "ultralytics>=8.3,<9",
+  "uvicorn[standard]>=0.30,<1",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +30,7 @@ smart-parking = "smart_parking.cli.main:app"
 
 [dependency-groups]
 dev = [
+  "httpx>=0.27,<1",
   "pytest>=8.2,<9",
   "pytest-cov>=5.0,<7",
   "ruff>=0.5,<1",
@@ -41,6 +45,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/smart_parking"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/smart_parking/api/templates" = "smart_parking/api/templates"
 
 [tool.ruff]
 line-length = 100
@@ -62,7 +69,16 @@ mypy_path = "src"
 packages = ["smart_parking"]
 
 [[tool.mypy.overrides]]
-module = ["cv2", "cv2.*", "ultralytics", "ultralytics.*", "shapely", "shapely.*"]
+module = [
+  "cv2",
+  "cv2.*",
+  "ultralytics",
+  "ultralytics.*",
+  "shapely",
+  "shapely.*",
+  "uvicorn",
+  "uvicorn.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

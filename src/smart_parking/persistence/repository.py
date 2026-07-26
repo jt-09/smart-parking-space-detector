@@ -129,6 +129,8 @@ class EventRepository(Protocol):
 
     def get_run(self, run_id: str) -> ProcessingRunRecord | None: ...
 
+    def list_runs(self, *, limit: int | None = None) -> list[ProcessingRunRecord]: ...
+
 
 def event_type_for_transition(
     previous: OccupancyState,
@@ -425,3 +427,11 @@ class SqlAlchemyEventRepository:
             if row is None:
                 return None
             return _row_to_run(row)
+
+    def list_runs(self, *, limit: int | None = None) -> list[ProcessingRunRecord]:
+        with self._session_factory() as session:
+            stmt = select(ProcessingRunRow).order_by(ProcessingRunRow.started_at.desc())
+            if limit is not None:
+                stmt = stmt.limit(limit)
+            rows = session.scalars(stmt).all()
+            return [_row_to_run(row) for row in rows]
