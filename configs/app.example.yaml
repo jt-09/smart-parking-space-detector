@@ -45,6 +45,7 @@ state:
   unknown_after_invalid_frames: 10
 
 persistence:
+  enabled: false
   database_url: sqlite:///output/parking.db
   snapshot_interval_seconds: 5
   event_retention_days: 90
