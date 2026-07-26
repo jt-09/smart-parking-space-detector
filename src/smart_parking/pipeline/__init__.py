@@ -6,7 +6,11 @@ from smart_parking.pipeline.processor import (
     PipelineResult,
     create_detector,
 )
-from smart_parking.pipeline.snapshot import PipelineMetrics, snapshot_to_dict, space_occupancy_to_dict
+from smart_parking.pipeline.snapshot import (
+    PipelineMetrics,
+    snapshot_to_dict,
+    space_occupancy_to_dict,
+)
 from smart_parking.pipeline.writers import (
     AnnotatedVideoWriter,
     JsonlSnapshotWriter,
