@@ -260,11 +260,17 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
    - Files: `tests/integration/**`, `tests/unit/test_pipeline_writers.py`, `tests/test_package.py`, `docs/pipeline.md`, `docs/development-timeline.md`, `CHANGELOG.md`
    - Rationale: lock transitions + artifacts acceptance; document pipeline and timeline outcome
    - Bounds: after previous commit; on 2026-07-26 afternoon; ≤ NOW
+6. **2026-07-26T16:41:08+10:00** — `fix(pipeline): apply ruff format to package exports`
+   - Files: `src/smart_parking/pipeline/__init__.py`
+   - Rationale: CI `ruff format --check` required multiline import wrapping after writers export landed
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
 
 #### Outcome
 
 - Branch: `feat/processing-pipeline`
 - Issue: #15
+- PR: #16
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - SyntheticFrameSource + FakeDetector only in tests (temp artifacts under pytest tmp dirs)
+- Follow-up format fix after CI quality failure on `pipeline/__init__.py`
