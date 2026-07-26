@@ -274,3 +274,36 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - SyntheticFrameSource + FakeDetector only in tests (temp artifacts under pytest tmp dirs)
 - Follow-up format fix after CI quality failure on `pipeline/__init__.py`
+
+### PR 9 — Event persistence and analytics (`feat/event-persistence`)
+
+`LAST_COMMIT_AT` (author): 2026-07-26T17:18:44+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned evening: 2026-07-26
+
+1. **2026-07-26T17:51:23+10:00** — `feat(db): add processing run and occupancy event schema`
+   - Files: `pyproject.toml`, `uv.lock`, `src/smart_parking/persistence/models.py`, `db.py`, `__init__.py`
+   - Rationale: SQLAlchemy tables and migrations-lite before repository/event services
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-26 evening; ≤ NOW; inside owner window
+2. **2026-07-26T18:47:09+10:00** — `feat(events): persist idempotent confirmed transitions`
+   - Files: `repository.py`, `events.py`, `pipeline/processor.py`, `config/models.py`, `configs/app.example.yaml`, `__init__.py`
+   - Rationale: run lifecycle + unique idempotency keys wired optionally into the pipeline
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+3. **2026-07-26T19:38:56+10:00** — `feat(analytics): calculate durations occupancy and turnover`
+   - Files: `analytics.py`, `__init__.py`
+   - Rationale: duration pairing (still-occupied handled), turnover, hourly buckets
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+4. **2026-07-26T20:55:41+10:00** — `feat(cli): add event export and retention commands`
+   - Files: `export.py`, `cli/main.py`, `__init__.py`
+   - Rationale: operator export/migrate/purge entrypoints matching SETUP CLI surface
+   - Bounds: after previous commit; on 2026-07-26; ≤ NOW
+5. **2026-07-26T21:42:17+10:00** — `test(db): cover transactions idempotency and analytics`
+   - Files: `tests/unit/test_persistence.py`, `tests/test_package.py`, `docs/persistence.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: lock acceptance (idempotency, interrupt, still-occupied, temp SQLite) + docs
+   - Bounds: after previous commit; on 2026-07-26 evening; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/event-persistence`
+- Issue: #17
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Tests use temporary SQLite only; persistence off by default for FakeDetector E2E

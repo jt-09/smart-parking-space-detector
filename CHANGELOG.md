@@ -38,3 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   assignment, occupancy engine, annotation renderer, annotated video + JSONL
   snapshot writers, FPS metrics, graceful Ctrl+C/EOF shutdown, and
   `smart-parking process` CLI; see `docs/pipeline.md`.
+- SQLite event persistence with SQLAlchemy models for processing runs,
+  parking spaces, occupancy events (unique idempotency keys), and optional
+  snapshots; duration/turnover/hourly analytics; `export-events`,
+  `db migrate`, and `db purge` CLI commands; optional pipeline injection
+  via `persistence.enabled` / `--persist`; see `docs/persistence.md`.

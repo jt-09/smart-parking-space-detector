@@ -37,6 +37,8 @@ def test_cli_help() -> None:
     plain = _plain(result.stdout)
     assert "edit-spaces" in plain
     assert "process" in plain
+    assert "export-events" in plain
+    assert "db" in plain
 
 
 def test_cli_version_flag() -> None:
