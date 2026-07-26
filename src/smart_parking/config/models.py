@@ -97,6 +97,7 @@ class StateSettings(BaseModel):
 class PersistenceSettings(BaseModel):
     """SQLite / event retention settings."""
 
+    enabled: bool = False
     database_url: str = "sqlite:///output/parking.db"
     snapshot_interval_seconds: float = Field(default=5.0, gt=0.0)
     event_retention_days: int = Field(default=90, ge=1)
