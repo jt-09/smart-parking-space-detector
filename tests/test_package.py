@@ -37,6 +37,7 @@ def test_cli_help() -> None:
     plain = _plain(result.stdout)
     assert "edit-spaces" in plain
     assert "process" in plain
+    assert "serve" in plain
     assert "export-events" in plain
     assert "db" in plain
 
@@ -64,3 +65,13 @@ def test_process_help() -> None:
     assert "--config" in plain or "-c" in plain
     assert "--source" in plain or "-s" in plain
     assert "process" in plain.lower()
+
+
+def test_serve_help() -> None:
+    result = runner.invoke(app, ["serve", "--help"], env=_CLI_ENV)
+    assert result.exit_code == 0
+    plain = _plain(result.stdout)
+    assert "--config" in plain or "-c" in plain
+    assert "--host" in plain
+    assert "--port" in plain
+    assert "serve" in plain.lower()
