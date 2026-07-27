@@ -313,6 +313,76 @@ def process_command(
         typer.echo(f"Events database: {settings.persistence.database_url}")
 
 
+@app.command("serve")
+def serve_command(
+    config: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--config",
+        "-c",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional YAML settings file (defaults + env still apply).",
+    ),
+    host: str | None = typer.Option(
+        None,
+        "--host",
+        help="Bind host (default: settings.api.host, typically 127.0.0.1).",
+    ),
+    port: int | None = typer.Option(
+        None,
+        "--port",
+        min=1,
+        max=65535,
+        help="Bind port (default: settings.api.port, typically 8000).",
+    ),
+    database_url: str | None = typer.Option(
+        None,
+        "--database-url",
+        help="SQLAlchemy database URL override for analytics endpoints.",
+    ),
+) -> None:
+    """Serve the status API and lightweight dashboard (localhost by default)."""
+    import uvicorn
+
+    from smart_parking.api.app import create_app
+    from smart_parking.api.runtime import StatusStore, source_status_from_settings
+    from smart_parking.config.loader import ConfigError, load_settings
+
+    overrides: dict[str, Any] = {}
+    if host is not None:
+        overrides.setdefault("api", {})["host"] = host
+    if port is not None:
+        overrides.setdefault("api", {})["port"] = port
+    if database_url is not None:
+        overrides.setdefault("persistence", {})["database_url"] = database_url
+        overrides.setdefault("persistence", {})["enabled"] = True
+
+    try:
+        settings = load_settings(config, overrides=overrides or None)
+    except ConfigError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    repository = None
+    if settings.persistence.enabled or database_url is not None:
+        repository = _open_repository(settings.persistence.database_url)
+
+    store = StatusStore(source=source_status_from_settings(settings))
+    app = create_app(settings=settings, store=store, repository=repository)
+
+    bind_host = settings.api.host
+    bind_port = settings.api.port
+    typer.secho(
+        f"Serving Smart Parking API on http://{bind_host}:{bind_port}/ "
+        f"(docs at /docs). Separate-process mode: publish snapshots via "
+        f"the process command with persistence, or inject state in tests.",
+        fg=typer.colors.GREEN,
+    )
+    uvicorn.run(app, host=bind_host, port=bind_port, log_level="info")
+
+
 @app.command("export-events")
 def export_events_command(
     output: Path = typer.Option(  # noqa: B008
