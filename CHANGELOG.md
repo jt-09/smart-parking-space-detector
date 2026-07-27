@@ -43,3 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   snapshots; duration/turnover/hourly analytics; `export-events`,
   `db migrate`, and `db purge` CLI commands; optional pipeline injection
   via `persistence.enabled` / `--persist`; see `docs/persistence.md`.
+- FastAPI status API and Jinja2 dashboard: `/health`, `/api/v1` status/
+  spaces/events/analytics/runs endpoints, `smart-parking serve`, localhost
+  bind by default, injectable snapshot/repository for weight-free tests;
+  see `docs/api.md`.

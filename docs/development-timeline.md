@@ -307,3 +307,36 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Tests use temporary SQLite only; persistence off by default for FakeDetector E2E
+
+### PR 10 — FastAPI and status dashboard (`feat/api-dashboard`)
+
+`LAST_COMMIT_AT` (author): 2026-07-26T21:58:04+10:00 · `NOW` upper bound: 2026-07-29 (wall clock) · planned day: 2026-07-27
+
+1. **2026-07-27T09:22:41+10:00** — `feat(api): add health status and space endpoints`
+   - Files: `pyproject.toml`, `uv.lock`, `src/smart_parking/api/**` (factory, DI, schemas, routes), `persistence/repository.py` (`list_runs`)
+   - Rationale: FastAPI surface and injectable runtime before CLI/dashboard wiring
+   - Bounds: after LAST_COMMIT_AT; on 2026-07-27 morning; ≤ NOW; inside owner window
+2. **2026-07-27T10:51:18+10:00** — `feat(api): expose events and occupancy analytics`
+   - Files: `src/smart_parking/cli/main.py` (`serve` command)
+   - Rationale: operator entrypoint binds localhost and opens repository for events/analytics/runs
+   - Bounds: after previous commit; on 2026-07-27; ≤ NOW
+3. **2026-07-27T12:38:06+10:00** — `feat(dashboard): add lightweight status interface`
+   - Files: `src/smart_parking/api/templates/dashboard.html`
+   - Rationale: server-rendered status page with unknown/stale emphasis
+   - Bounds: after previous commit; on 2026-07-27; ≤ NOW
+4. **2026-07-27T14:19:44+10:00** — `test(api): cover API contracts and error responses`
+   - Files: `tests/unit/test_api.py`, `tests/test_package.py`
+   - Rationale: TestClient contracts without camera/YOLO; lock 422/503/OpenAPI acceptance
+   - Bounds: after previous commit; on 2026-07-27; ≤ NOW
+5. **2026-07-27T15:47:22+10:00** — `docs(api): add local usage and endpoint examples`
+   - Files: `docs/api.md`, `docs/development-timeline.md`, `CHANGELOG.md`
+   - Rationale: operator usage guide with timeline outcome
+   - Bounds: after previous commit; on 2026-07-27 afternoon; ≤ NOW
+
+#### Outcome
+
+- Branch: `feat/api-dashboard`
+- Issue: #19
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Tests inject fake snapshots and temp SQLite only (no camera / YOLO weights)
