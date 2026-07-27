@@ -46,9 +46,6 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src/smart_parking"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"src/smart_parking/api/templates" = "smart_parking/api/templates"
-
 [tool.ruff]
 line-length = 100
 target-version = "py311"
