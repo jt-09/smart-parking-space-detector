@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --available: #22c55e;
+      --occupied: #ef4444;
+      --unknown: #eab308;
+      --stale: #f97316;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 55%, #0b1224 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.5rem 2rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.6rem; }
+    header p { margin: 0; color: var(--muted); }
+    main { padding: 1.25rem 2rem 2.5rem; display: grid; gap: 1.25rem; }
+    .banner {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--stale) 20%, transparent);
+      border: 1px solid var(--stale);
+      color: #ffedd5;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .metric .label { color: var(--muted); font-size: 0.85rem; }
+    .metric .value { font-size: 1.6rem; font-weight: 700; margin-top: 0.25rem; }
+    .metric.available .value { color: var(--available); }
+    .metric.occupied .value { color: var(--occupied); }
+    .metric.unknown .value { color: var(--unknown); }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+    }
+    section h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { text-align: left; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    .state {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .state.available { background: color-mix(in srgb, var(--available) 25%, transparent); color: #86efac; }
+    .state.occupied { background: color-mix(in srgb, var(--occupied) 25%, transparent); color: #fca5a5; }
+    .state.unknown { background: color-mix(in srgb, var(--unknown) 25%, transparent); color: #fde047; }
+    .meta { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    a { color: #93c5fd; }
+    footer { padding: 0 2rem 1.5rem; color: var(--muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Smart Parking Status</h1>
+    <p>Camera <strong>{{ camera_id }}</strong> · API v{{ version }} ·
+      <a href="/docs">OpenAPI docs</a> ·
+      <a href="/api/v1/status">/api/v1/status</a>
+    </p>
+  </header>
+  <main>
+    {% if stale %}
+    <div class="banner" role="status">
+      Source is <strong>stale</strong>
+      {% if source.last_frame_at %}
+        — last valid frame at {{ source.last_frame_at }}.
+      {% else %}
+        — no occupancy snapshot has been published yet (separate-process mode or idle serve).
+      {% endif %}
+      Unknown / pending spaces are highlighted below.
+    </div>
+    {% endif %}
+
+    <div class="metrics">
+      <div class="metric"><div class="label">Total spaces</div><div class="value">{{ total }}</div></div>
+      <div class="metric available"><div class="label">Available</div><div class="value">{{ available }}</div></div>
+      <div class="metric occupied"><div class="label">Occupied</div><div class="value">{{ occupied }}</div></div>
+      <div class="metric unknown"><div class="label">Unknown</div><div class="value">{{ unknown }}</div></div>
+      <div class="metric"><div class="label">Occupancy %</div><div class="value">{{ '%.1f'|format(occupancy_percent) }}%</div></div>
+    </div>
+
+    <section>
+      <h2>Source / model</h2>
+      <div class="meta">
+        Source: <code>{{ source.source }}</code><br>
+        Model: <code>{{ source.model_name }}</code> on <code>{{ source.model_device }}</code><br>
+        Last frame: {% if captured_at %}{{ captured_at }}{% else %}<em>none</em>{% endif %}<br>
+        Max frame age: {{ source.max_frame_age_seconds }}s ·
+        Persistence: {% if persistence_enabled %}enabled{% else %}disabled{% endif %} ·
+        Freshness: {% if stale %}<strong style="color: var(--stale);">STALE</strong>{% else %}<strong style="color: var(--available);">OK</strong>{% endif %}
+      </div>
+    </section>
+
+    <section>
+      <h2>Spaces</h2>
+      {% if spaces %}
+      <table>
+        <thead>
+          <tr><th>Space</th><th>State</th><th>Confidence</th><th>Track</th><th>Flags</th></tr>
+        </thead>
+        <tbody>
+          {% for space in spaces %}
+          <tr>
+            <td><code>{{ space.space_id }}</code></td>
+            <td><span class="state {{ space.state }}">{{ space.state }}</span></td>
+            <td>{{ '%.2f'|format(space.confidence) }}</td>
+            <td>{% if space.track_id %}{{ space.track_id }}{% else %}—{% endif %}</td>
+            <td>
+              {% if space.is_unknown %}unknown {% endif %}
+              {% if space.is_pending %}pending{% endif %}
+              {% if not space.is_unknown and not space.is_pending %}—{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="meta">No spaces in the current snapshot.</p>
+      {% endif %}
+    </section>
+
+    <section>
+      <h2>Latest events</h2>
+      {% if events %}
+      <table>
+        <thead>
+          <tr><th>Confirmed</th><th>Space</th><th>Type</th><th>Transition</th><th>Confidence</th></tr>
+        </thead>
+        <tbody>
+          {% for event in events %}
+          <tr>
+            <td>{{ event.confirmed_at }}</td>
+            <td><code>{{ event.space_id }}</code></td>
+            <td>{{ event.event_type }}</td>
+            <td>{{ event.previous_state }} → {{ event.new_state }}</td>
+            <td>{{ '%.2f'|format(event.confidence) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="meta">
+        {% if persistence_enabled %}
+          No events recorded yet.
+        {% else %}
+          Persistence is disabled — start the API with a repository or enable
+          <code>persistence.enabled</code> to show historical events.
+        {% endif %}
+      </p>
+      {% endif %}
+    </section>
+  </main>
+  <footer>Smart Parking-Space Detector · bind defaults to 127.0.0.1:8000</footer>
+</body>
+</html>
