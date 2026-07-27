@@ -332,11 +332,17 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
    - Files: `docs/api.md`, `docs/development-timeline.md`, `CHANGELOG.md`
    - Rationale: operator usage guide with timeline outcome
    - Bounds: after previous commit; on 2026-07-27 afternoon; ≤ NOW
+6. **2026-07-27T16:18:55+10:00** — `fix(build): remove duplicate hatch template force-include`
+   - Files: `pyproject.toml`
+   - Rationale: CI `uv build` failed because force-include duplicated `dashboard.html` already packaged by hatchling
+   - Bounds: after previous commit; on 2026-07-27; ≤ NOW
 
 #### Outcome
 
 - Branch: `feat/api-dashboard`
 - Issue: #19
+- PR: #20
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Tests inject fake snapshots and temp SQLite only (no camera / YOLO weights)
+- Follow-up build fix after CI wheel packaging failure on duplicate template path
