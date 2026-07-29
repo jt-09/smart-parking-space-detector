@@ -38,7 +38,7 @@ COPY docker/entrypoint.sh /app/docker/entrypoint.sh
 
 RUN chmod +x /app/docker/entrypoint.sh \
     && uv sync --locked --no-dev \
-    && uv pip uninstall -y opencv-python \
+    && uv pip uninstall opencv-python \
     && uv pip install --no-cache "opencv-python-headless>=4.9,<5" \
     && mkdir -p /app/output /app/data \
     && chown -R app:app /app
