@@ -104,6 +104,8 @@ def current_rss_bytes() -> int | None:
 
 
 def _windows_rss_bytes() -> int | None:
+    if sys.platform != "win32":
+        return None
     try:
         import ctypes
         from ctypes import wintypes
@@ -124,15 +126,17 @@ def _windows_rss_bytes() -> int | None:
 
         counters = PROCESS_MEMORY_COUNTERS()
         counters.cb = ctypes.sizeof(PROCESS_MEMORY_COUNTERS)
-        get_process = ctypes.windll.kernel32.GetCurrentProcess
-        get_mem = ctypes.windll.psapi.GetProcessMemoryInfo
+        # WinDLL avoids ctypes.windll attribute access that fails under mypy on Linux.
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        psapi = ctypes.WinDLL("psapi", use_last_error=True)
+        get_mem = psapi.GetProcessMemoryInfo
         get_mem.argtypes = [
             wintypes.HANDLE,
             ctypes.POINTER(PROCESS_MEMORY_COUNTERS),
             wintypes.DWORD,
         ]
         get_mem.restype = wintypes.BOOL
-        ok = get_mem(get_process(), ctypes.byref(counters), counters.cb)
+        ok = get_mem(kernel32.GetCurrentProcess(), ctypes.byref(counters), counters.cb)
         if not ok:
             return None
         return int(counters.PeakWorkingSetSize)

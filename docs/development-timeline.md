@@ -379,3 +379,4 @@ per the developmental-commit-timeline skill (cannot re-enter 2026-07-27).
 - Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Default benchmark uses SyntheticFrameSource + FakeDetector only
+- Follow-up `fix(evaluation): use WinDLL for portable RSS mypy` after CI quality mypy failure on Linux
