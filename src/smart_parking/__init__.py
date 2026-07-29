@@ -7,4 +7,4 @@ __all__ = ["__version__"]
 try:
     __version__ = version("smart-parking")
 except PackageNotFoundError:  # pragma: no cover - editable/dev fallback
-    __version__ = "0.1.0"
+    __version__ = "1.0.0"

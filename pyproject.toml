@@ -1,6 +1,6 @@
 [project]
 name = "smart-parking"
-version = "0.1.0"
+version = "1.0.0"
 description = "Fixed-camera parking-lot occupancy detector with YOLO, polygon maps, CLI, API, and dashboard."
 readme = "README.md"
 license = { text = "AGPL-3.0-only" }
