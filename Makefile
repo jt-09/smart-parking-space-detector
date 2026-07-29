@@ -26,5 +26,6 @@ build:
 
 smoke:
 	uv run smart-parking --help
+	uv run python scripts/smoke_test.py
 
 check: format-check lint typecheck cov smoke
