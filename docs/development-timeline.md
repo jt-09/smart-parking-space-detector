@@ -419,3 +419,4 @@ precede the tip and are therefore invalid; this PR uses uneven gaps on **2026-07
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Branch rules already require `quality`, `unit-tests`, `integration-tests`, `build` (verified; no ruleset API change needed)
 - Local coverage ≥ 85%; smoke script passes without YOLO weights
+- Follow-up `fix(docker): drop unsupported uv pip uninstall -y flag` after local Docker build failed on `uv pip uninstall -y`
