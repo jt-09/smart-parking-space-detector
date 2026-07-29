@@ -380,3 +380,42 @@ per the developmental-commit-timeline skill (cannot re-enter 2026-07-27).
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Default benchmark uses SyntheticFrameSource + FakeDetector only
 - Follow-up `fix(evaluation): use WinDLL for portable RSS mypy` after CI quality mypy failure on Linux
+
+### PR 12 — CI, security, and container hardening (`chore/production-hardening`)
+
+`LAST_COMMIT_AT` (committer tip on `main`): 2026-07-29T22:43:52+10:00 · `NOW` upper bound: wall clock on 2026-07-29 · preferred guide day was 2026-07-28 (owner window already past on `main`)
+
+**Spillover note:** owner window ends 2026-07-28T22:00:00+10:00, but `main` HEAD is already
+2026-07-29T22:43:52+10:00. Commits are placed **strictly after** `LAST_COMMIT_AT` and **≤ NOW**
+per the developmental-commit-timeline skill. Dates inside the closed Jul 22–28 window would
+precede the tip and are therefore invalid; this PR uses uneven gaps on **2026-07-29** after the tip.
+
+1. **2026-07-29T22:45:18+10:00** — `chore(ci): enforce quality unit integration and build checks`
+   - Files: `.github/workflows/ci.yml`
+   - Rationale: separate integration path and keep coverage gate on the full synthetic suite
+   - Bounds: after LAST_COMMIT_AT; ≤ NOW; spillover day 2026-07-29
+2. **2026-07-29T22:47:41+10:00** — `chore(security): add CodeQL Dependabot and secret guidance`
+   - Files: `.github/workflows/codeql.yml`, `.github/dependabot.yml`, `SECURITY.md`
+   - Rationale: scanning and dependency update automation before container packaging
+   - Bounds: after previous; ≤ NOW
+3. **2026-07-29T22:50:09+10:00** — `chore(docker): add non-root reproducible container image`
+   - Files: `Dockerfile`, `.dockerignore`, `docker/entrypoint.sh`, `.gitattributes`
+   - Rationale: non-root runtime with OpenCV headless swap and LF entrypoint
+   - Bounds: after previous; ≤ NOW
+4. **2026-07-29T22:52:33+10:00** — `test(smoke): validate package and container startup`
+   - Files: `scripts/smoke_test.py`, `Makefile`, `.github/workflows/ci.yml` (smoke step)
+   - Rationale: weight-free import/config/pipeline/API smoke wired into make + CI build
+   - Bounds: after previous; ≤ NOW
+5. **2026-07-29T22:55:17+10:00** — `docs(ops): add deployment and troubleshooting guidance`
+   - Files: `docs/troubleshooting.md`, `docs/deployment.md`, `CHANGELOG.md`, `docs/development-timeline.md`
+   - Rationale: operator runbooks + honest spillover timeline outcome
+   - Bounds: after previous; ≤ NOW
+
+#### Outcome
+
+- Branch: `chore/production-hardening`
+- Issue: #23
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Branch rules already require `quality`, `unit-tests`, `integration-tests`, `build` (verified; no ruleset API change needed)
+- Local coverage ≥ 85%; smoke script passes without YOLO weights
