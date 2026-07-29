@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Production hardening: CodeQL workflow, Dependabot (`uv` + GitHub Actions),
+  non-root Dockerfile with OpenCV headless swap, `.dockerignore`, container
+  entrypoint, weight-free `scripts/smoke_test.py`, deployment and troubleshooting
+  guides, and expanded security/secret-scanning guidance.
 - Autonomous agent bootstrap kit and Phase 0 project scaffold.
 - Developmental commit timeline window documented as 2026-07-22 through 2026-07-28 (+10:00).
 - Typed domain models for bounding boxes, detections, parking maps, occupancy
