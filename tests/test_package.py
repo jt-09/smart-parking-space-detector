@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
 from typer.testing import CliRunner
 
@@ -38,8 +39,92 @@ def test_cli_help() -> None:
     assert "edit-spaces" in plain
     assert "process" in plain
     assert "serve" in plain
+    assert "benchmark" in plain
     assert "export-events" in plain
     assert "db" in plain
+
+
+def test_benchmark_help() -> None:
+    result = runner.invoke(app, ["benchmark", "--help"], env=_CLI_ENV)
+    assert result.exit_code == 0
+    plain = _plain(result.stdout)
+    assert "--frames" in plain
+    assert "--report" in plain or "-o" in plain
+    assert "ground-truth" in plain or "ground_truth" in plain.lower()
+
+
+def test_benchmark_runs_synthetic(tmp_path: Path) -> None:
+    report = tmp_path / "bench.txt"
+    result = runner.invoke(
+        app,
+        [
+            "benchmark",
+            "--frames",
+            "6",
+            "--width",
+            "64",
+            "--height",
+            "48",
+            "--report",
+            str(report),
+        ],
+        env=_CLI_ENV,
+    )
+    assert result.exit_code == 0, result.stdout + result.stderr
+    plain = _plain(result.stdout)
+    assert "Throughput" in plain
+    assert "e2e_fps" in plain
+    assert report.is_file()
+    assert "Smart Parking" in report.read_text(encoding="utf-8")
+
+
+def test_benchmark_requires_predictions_with_ground_truth(tmp_path: Path) -> None:
+    gt = tmp_path / "gt.csv"
+    gt.write_text(
+        "frame_or_time,space_id,expected_state\n0,A1,available\n",
+        encoding="utf-8",
+    )
+    result = runner.invoke(
+        app,
+        ["benchmark", "--frames", "4", "--width", "64", "--height", "48", "-g", str(gt)],
+        env=_CLI_ENV,
+    )
+    assert result.exit_code == 1
+    assert "predictions" in (result.stdout + result.stderr).lower()
+
+
+def test_benchmark_with_ground_truth(tmp_path: Path) -> None:
+    gt = tmp_path / "gt.csv"
+    pred = tmp_path / "pred.csv"
+    gt.write_text(
+        "frame_or_time,space_id,expected_state\n0,A1,available\n1,A1,occupied\n",
+        encoding="utf-8",
+    )
+    pred.write_text(
+        "frame_or_time,space_id,predicted_state\n0,A1,available\n1,A1,occupied\n",
+        encoding="utf-8",
+    )
+    result = runner.invoke(
+        app,
+        [
+            "benchmark",
+            "--frames",
+            "4",
+            "--width",
+            "64",
+            "--height",
+            "48",
+            "-g",
+            str(gt),
+            "-p",
+            str(pred),
+        ],
+        env=_CLI_ENV,
+    )
+    assert result.exit_code == 0, result.stdout + result.stderr
+    plain = _plain(result.stdout)
+    assert "Occupancy accuracy" in plain
+    assert "macro_accuracy" in plain
 
 
 def test_cli_version_flag() -> None:
