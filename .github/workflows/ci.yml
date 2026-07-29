@@ -44,9 +44,9 @@ jobs:
           python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
-      - name: Unit tests with coverage
+      - name: Unit and package tests with coverage
         run: >
-          uv run pytest tests
+          uv run pytest tests/unit tests/test_package.py tests/integration
           --cov=smart_parking
           --cov-report=term-missing
           --cov-report=xml
@@ -69,9 +69,8 @@ jobs:
           python-version: "3.11"
       - name: Sync dependencies
         run: uv sync --locked --all-groups
-      - name: Integration placeholder
-        run: uv run pytest tests -q
-        # Real synthetic-media integration tests land in later phases.
+      - name: Synthetic media and CLI integration
+        run: uv run pytest tests/integration -q
 
   build:
     name: build
@@ -86,7 +85,7 @@ jobs:
         run: uv sync --locked --all-groups
       - name: Build distributions
         run: uv build
-      - name: Import and smoke
+      - name: Import CLI and package smoke
         run: |
           uv run python -c "import smart_parking; print(smart_parking.__version__)"
           uv run smart-parking --help
