@@ -9,12 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [1.0.0] - 2026-07-29
+
+First portfolio-ready release of the Smart Parking-Space Detector.
+
+### Added
+
+- Portfolio documentation: polished README (problem, architecture diagram, synthetic
+  quick start across Windows/macOS/Linux via `uv`), architecture guide, dataset and
+  privacy policy, configuration/evaluation/troubleshooting polish, and published
+  development timeline with honest owner-window spillover notes.
 - Production hardening: CodeQL workflow, Dependabot (`uv` + GitHub Actions),
   non-root Dockerfile with OpenCV headless swap, `.dockerignore`, container
   entrypoint, weight-free `scripts/smoke_test.py`, deployment and troubleshooting
   guides, and expanded security/secret-scanning guidance.
 - Autonomous agent bootstrap kit and Phase 0 project scaffold.
-- Developmental commit timeline window documented as 2026-07-22 through 2026-07-28 (+10:00).
+- Developmental commit timeline window documented as 2026-07-22 through 2026-07-28 (+10:00),
+  with later PRs continuing on 2026-07-29 when `main` tip already passed the closed window.
 - Typed domain models for bounding boxes, detections, parking maps, occupancy
   states/snapshots, and occupancy events (UTC clock abstraction included).
 - Layered Pydantic application settings with YAML / environment / override
@@ -55,3 +70,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   precision-recall-F1, transition precision/recall, false flips, latency)
   plus synthetic FakeDetector throughput/memory benchmarks via
   `smart-parking benchmark` and `scripts/benchmark.py`; see `docs/evaluation.md`.
+
+### Known limitations
+
+- Synthetic FakeDetector demos are the default; real footage is optional and never committed.
+- Manual parking polygons only; no auto bay discovery, LPR, or multi-camera re-ID.
+- Docker images are large due to torch/Ultralytics transitive dependencies.
+- Real-footage ≥90% occupancy acceptance is not claimed from in-repo fixtures.
+
+[Unreleased]: https://github.com/jt-09/smart-parking-space-detector/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/jt-09/smart-parking-space-detector/releases/tag/v1.0.0
