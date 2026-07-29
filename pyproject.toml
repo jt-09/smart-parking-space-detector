@@ -34,7 +34,7 @@ dev = [
   "pytest>=8.2,<9",
   "pytest-cov>=5.0,<7",
   "ruff>=0.5,<1",
-  "mypy>=1.10,<2",
+  "mypy>=2.3.0,<3",
   "pre-commit>=3.7,<5",
   "types-PyYAML>=6.0,<7",
 ]
