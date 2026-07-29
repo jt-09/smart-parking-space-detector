@@ -89,3 +89,5 @@ jobs:
         run: |
           uv run python -c "import smart_parking; print(smart_parking.__version__)"
           uv run smart-parking --help
+      - name: End-to-end smoke script
+        run: uv run python scripts/smoke_test.py
