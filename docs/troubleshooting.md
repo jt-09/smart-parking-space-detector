@@ -77,8 +77,22 @@ uv run python scripts/smoke_test.py
 
 Required branch checks on `main`: `quality`, `unit-tests`, `integration-tests`, `build`.
 
+## Clean-clone quick check
+
+From a fresh clone, the synthetic path should succeed without weights:
+
+```bash
+uv python install 3.11
+uv sync --locked --all-groups
+uv run smart-parking process --detector fake --source synthetic --no-save-video
+uv run python scripts/smoke_test.py
+```
+
+If this fails, the problem is environment/setup — not missing private footage.
+
 ## Still stuck?
 
 1. Re-run `uv run python scripts/smoke_test.py` and capture the first failing step.
 2. Confirm you did not commit `.env`, weights (`*.pt`), footage, or SQLite databases.
 3. Open an issue with OS, `uv --version`, and the failing command output (redact secrets).
+4. Review [`dataset-and-privacy.md`](dataset-and-privacy.md) and [`deployment.md`](deployment.md).

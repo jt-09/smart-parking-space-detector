@@ -128,8 +128,16 @@ report = evaluate_occupancy(
 print(format_benchmark_report(throughput=throughput, occupancy=report))
 ```
 
+## Example synthetic throughput (committed template)
+
+See [`assets/benchmark_report.example.txt`](assets/benchmark_report.example.txt)
+for a reproducible FakeDetector sample (≈408 e2e FPS / ≈72 MiB RSS on one
+Windows AMD64 host, 60×320×240 frames). Numbers vary by machine; regenerate
+locally and cite hardware when quoting results.
+
 ## Related docs
 
 - [`pipeline.md`](pipeline.md) — processing loop and FPS counters
 - [`detection.md`](detection.md) — FakeDetector vs Ultralytics
+- [`dataset-and-privacy.md`](dataset-and-privacy.md) — media policy
 - [`SETUP.md`](../SETUP.md) §13 — evaluation requirements
