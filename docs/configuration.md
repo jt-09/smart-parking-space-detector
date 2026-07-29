@@ -2,7 +2,8 @@
 
 This project uses layered configuration so operators can keep safe defaults in
 code, ship example YAML, and override sensitive or machine-specific values
-locally.
+locally. Cross-platform setup (Windows / macOS / Linux) always starts from
+`uv sync --locked --all-groups` after cloning; see the root README quick start.
 
 ## Precedence
 
