@@ -47,3 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   spaces/events/analytics/runs endpoints, `smart-parking serve`, localhost
   bind by default, injectable snapshot/repository for weight-free tests;
   see `docs/api.md`.
+- Occupancy evaluation metrics (per-space / macro accuracy, occupied
+  precision-recall-F1, transition precision/recall, false flips, latency)
+  plus synthetic FakeDetector throughput/memory benchmarks via
+  `smart-parking benchmark` and `scripts/benchmark.py`; see `docs/evaluation.md`.

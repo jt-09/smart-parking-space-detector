@@ -1,0 +1,7 @@
+frame_or_time,space_id,expected_state
+0.0,A-001,available
+3.0,A-001,occupied
+18.0,A-001,available
+0.0,A-002,occupied
+10.0,A-002,occupied
+18.0,A-002,available
