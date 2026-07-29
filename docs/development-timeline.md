@@ -346,3 +346,36 @@ Architecture impact: repository becomes a typed, tested Python package with CI.
 - Exclusions respected: no `.env`, media, weights, databases, or generated videos
 - Tests inject fake snapshots and temp SQLite only (no camera / YOLO weights)
 - Follow-up build fix after CI wheel packaging failure on duplicate template path
+
+### PR 11 — Evaluation and performance benchmarks (`perf/evaluation-benchmarks`)
+
+`LAST_COMMIT_AT` (author): 2026-07-29T22:18:57+10:00 · `NOW` upper bound: wall clock on 2026-07-29 · preferred guide day was 2026-07-27 (owner window already past on `main`)
+
+Bounds note: owner window ends 2026-07-28T22:00:00+10:00, but `main` HEAD is already
+2026-07-29T22:18:57+10:00. Commits are placed **after** `LAST_COMMIT_AT` and **≤ NOW**
+per the developmental-commit-timeline skill (cannot re-enter 2026-07-27).
+
+1. **2026-07-29T22:20:41+10:00** — `feat(evaluation): define ground truth and occupancy metrics`
+   - Files: `src/smart_parking/evaluation/ground_truth.py`, `metrics.py`, `predictions.py`, `__init__.py`
+   - Rationale: CSV/JSON labels and metric math before throughput harness
+   - Bounds: after LAST_COMMIT_AT; ≤ NOW
+2. **2026-07-29T22:23:18+10:00** — `perf(benchmark): measure pipeline throughput and memory`
+   - Files: `throughput.py`, `report.py`, `__init__.py`, `cli/main.py`, `scripts/benchmark.py`
+   - Rationale: FakeDetector synthetic FPS/RSS + CLI/script entrypoints
+   - Bounds: after previous; ≤ NOW
+3. **2026-07-29T22:26:07+10:00** — `test(evaluation): validate metric calculations`
+   - Files: `tests/unit/test_evaluation.py`, `tests/test_package.py`
+   - Rationale: lock toy metric math and benchmark CLI smoke before docs
+   - Bounds: after previous; ≤ NOW
+4. **2026-07-29T22:29:52+10:00** — `docs(evaluation): publish reproducible benchmark procedure`
+   - Files: `docs/evaluation.md`, `docs/assets/**`, `README.md`, `CHANGELOG.md`, `docs/development-timeline.md`
+   - Rationale: honest synthetic vs real-footage claims + timeline outcome
+   - Bounds: after previous; ≤ NOW
+
+#### Outcome
+
+- Branch: `perf/evaluation-benchmarks`
+- Issue: #21
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Default benchmark uses SyntheticFrameSource + FakeDetector only

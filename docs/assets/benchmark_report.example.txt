@@ -1,0 +1,32 @@
+Smart Parking - evaluation / benchmark report
+generated_at_utc: 2026-07-29T12:34:29.588030Z
+
+Scope note: default throughput uses SyntheticFrameSource + FakeDetector.
+Do not extrapolate synthetic-demo accuracy to unlicensed real footage.
+
+Throughput
+----------
+frames_read: 60  frames_processed: 60
+decode_fps: 407.97
+inference_fps: 2000.00
+e2e_fps: 407.97
+elapsed_seconds: 0.147
+peak_rss: 72.14 MiB
+frame_size: 320x240
+detector: fake  device: cpu
+hardware:
+  system: Windows 10 (AMD64)
+  processor: AMD64 Family 25 Model 124 Stepping 0, AuthenticAMD
+  python: 3.11.15  cpu_count: 12
+config:
+  fps: 30.0
+  frame_count: 60
+  inference_ms_injected: 0.5
+  model: fake
+  process_every_n_frames: 1
+  save_annotated_video: False
+
+Notes
+-----
+- Default throughput path uses FakeDetector (no YOLO download).
+- Synthetic accuracy is not a real-footage acceptance claim.
