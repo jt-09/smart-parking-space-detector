@@ -383,6 +383,103 @@ def serve_command(
     uvicorn.run(app, host=bind_host, port=bind_port, log_level="info")
 
 
+@app.command("benchmark")
+def benchmark_command(
+    frames: int = typer.Option(
+        60,
+        "--frames",
+        min=1,
+        help="Synthetic frame count for the throughput trial.",
+    ),
+    width: int = typer.Option(
+        320,
+        "--width",
+        min=16,
+        help="Synthetic frame width.",
+    ),
+    height: int = typer.Option(
+        240,
+        "--height",
+        min=16,
+        help="Synthetic frame height.",
+    ),
+    report: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--report",
+        "-o",
+        help="Optional path for the plain-text benchmark report.",
+    ),
+    ground_truth: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--ground-truth",
+        "-g",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional ground-truth CSV/JSON for occupancy metrics.",
+    ),
+    predictions: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--predictions",
+        "-p",
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        help="Optional predictions CSV/JSON aligned to ground truth.",
+    ),
+    match_tolerance: float = typer.Option(
+        0.0,
+        "--match-tolerance",
+        help="Max |frame_or_time| delta when pairing predictions to labels.",
+    ),
+) -> None:
+    """Measure synthetic FakeDetector throughput and optional occupancy metrics."""
+    from smart_parking.evaluation.ground_truth import load_ground_truth
+    from smart_parking.evaluation.metrics import evaluate_occupancy
+    from smart_parking.evaluation.predictions import load_predictions
+    from smart_parking.evaluation.report import format_benchmark_report, write_benchmark_report
+    from smart_parking.evaluation.throughput import run_throughput_benchmark
+
+    try:
+        throughput = run_throughput_benchmark(
+            frame_count=frames,
+            width=width,
+            height=height,
+        )
+        occupancy = None
+        if ground_truth is not None:
+            if predictions is None:
+                typer.secho(
+                    "--predictions is required when --ground-truth is set.",
+                    fg=typer.colors.RED,
+                    err=True,
+                )
+                raise typer.Exit(code=1)
+            occupancy = evaluate_occupancy(
+                load_ground_truth(ground_truth),
+                load_predictions(predictions),
+                match_tolerance=match_tolerance,
+            )
+        text = format_benchmark_report(
+            throughput=throughput,
+            occupancy=occupancy,
+            notes=[
+                "Default throughput path uses FakeDetector (no YOLO download).",
+                "Synthetic accuracy is not a real-footage acceptance claim.",
+            ],
+        )
+    except (OSError, ValueError, RuntimeError) as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+
+    typer.echo(text)
+    if report is not None:
+        dest = write_benchmark_report(report, text)
+        typer.secho(f"Report written to {dest}", fg=typer.colors.GREEN)
+
+
 @app.command("export-events")
 def export_events_command(
     output: Path = typer.Option(  # noqa: B008
