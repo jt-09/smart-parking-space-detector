@@ -420,3 +420,60 @@ precede the tip and are therefore invalid; this PR uses uneven gaps on **2026-07
 - Branch rules already require `quality`, `unit-tests`, `integration-tests`, `build` (verified; no ruleset API change needed)
 - Local coverage ≥ 85%; smoke script passes without YOLO weights
 - Follow-up `fix(docker): drop unsupported uv pip uninstall -y flag` after local Docker build failed on `uv pip uninstall -y`
+
+### PR 13 — Portfolio documentation and v1 release candidate (`docs/v1-release-candidate`)
+
+`LAST_COMMIT_AT` (committer tip on `main`): 2026-07-29T23:15:16+10:00 · `NOW` upper bound: wall clock on 2026-07-29 · preferred guide day was 2026-07-28 (owner window already past on `main`)
+
+**Spillover note:** owner window ends 2026-07-28T22:00:00+10:00, but `main` HEAD is already
+2026-07-29T23:15:16+10:00 after PR 12. Commits are placed **strictly after** `LAST_COMMIT_AT` and
+**≤ NOW** per the developmental-commit-timeline skill. Dates inside the closed Jul 22–28 window
+would precede the tip and are therefore invalid; this PR continues honest spillover onto **2026-07-29**.
+
+#### Genuine evolution summary (from git history)
+
+| Phase / PR | Merged PR | Focus |
+| --- | --- | --- |
+| Bootstrap + Phase 0 | #2 | uv package, CI, contributor docs |
+| Domain / config | #4 | Pydantic settings and parking maps |
+| Frame sources | #6 | OpenCV + synthetic sources |
+| Map editor | #8 | Polygon editor CLI |
+| YOLO detector | #10 | Ultralytics adapter + FakeDetector |
+| Geometry | #12 | Overlap scoring and assignment |
+| State machine | #14 | Hysteresis occupancy engine |
+| Pipeline | #16 | End-to-end process + annotation |
+| Persistence | #18 | SQLite events and analytics |
+| API / dashboard | #20 | FastAPI + Jinja2 status UI |
+| Evaluation | #22 | Metrics + FakeDetector benchmarks |
+| Production hardening | #24 | CodeQL, Dependabot, Docker, smoke |
+| Docs / v1 RC | (this PR) | Portfolio docs + 1.0.0 metadata |
+
+Author dates for early phases land on 2026-07-22…27 inside the owner window; later PRs
+spill onto 2026-07-29 because `main` tip already passed the closed window end.
+
+#### Commit proposal
+
+1. **2026-07-29T23:17:41+10:00** — `docs(readme): add project overview architecture and demo`
+   - Files: `README.md`
+   - Rationale: portfolio entrypoint with problem, architecture, synthetic quick start, limitations
+   - Bounds: after LAST_COMMIT_AT; ≤ NOW; spillover day 2026-07-29
+2. **2026-07-29T23:22:16+10:00** — `docs: add setup evaluation privacy and troubleshooting guides`
+   - Files: `docs/architecture.md`, `docs/dataset-and-privacy.md`, `docs/configuration.md`, `docs/evaluation.md`, `docs/troubleshooting.md`
+   - Rationale: operator/setup docs before publishing timeline outcome
+   - Bounds: after previous; ≤ NOW
+3. **2026-07-29T23:27:49+10:00** — `docs(timeline): publish genuine development evolution`
+   - Files: `docs/development-timeline.md`
+   - Rationale: record spillover proposal and merged-PR evolution table
+   - Bounds: after previous; ≤ NOW
+4. **2026-07-29T23:33:28+10:00** — `chore(release): prepare version 1.0.0 changelog and metadata`
+   - Files: `pyproject.toml`, `uv.lock`, `CITATION.cff`, `CHANGELOG.md`, `src/smart_parking/__init__.py`, `docs/development-timeline.md`
+   - Rationale: version bump and Keep-a-Changelog promotion only after docs land
+   - Bounds: after previous; ≤ NOW
+
+#### Outcome
+
+- Branch: `docs/v1-release-candidate`
+- Issue: #33
+- Commits executed with `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` as proposed
+- Exclusions respected: no `.env`, media, weights, databases, or generated videos
+- Version metadata set to **1.0.0**; Unreleased changelog promoted to `[1.0.0] - 2026-07-29`
